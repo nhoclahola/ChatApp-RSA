@@ -28,6 +28,7 @@ import {
     LearnMoreLinks,
     ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import { useColorContext } from '../screens/Setting/ColorContext';
 
 
 type SectionProps = {
@@ -39,8 +40,9 @@ type SectionProps = {
 }
 
 function UIHeader({ title, leftIcon, rightIcon, onPressLeft, onPressRight }: SectionProps): React.JSX.Element {
+    const { colors } = useColorContext();
     return (
-        <View style={styles.container}>
+        <View style={{...styles.container, backgroundColor: colors.primary}}>
             {/* Nếu không có icon thì sẽ không hiện gì */}
             {leftIcon != undefined ? 
             <TouchableOpacity onPress={onPressLeft} style={styles.imgWrapper}>
@@ -60,7 +62,7 @@ function UIHeader({ title, leftIcon, rightIcon, onPressLeft, onPressRight }: Sec
 const styles = StyleSheet.create({
     container: {
         height: 55,
-        backgroundColor: 'red',
+        // backgroundColor: 'red',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -68,7 +70,7 @@ const styles = StyleSheet.create({
     },
 
     text: {
-        fontSize: 16,
+        fontSize: 18,
         alignSelf: 'center',
         lineHeight: 45,
         color: 'white',

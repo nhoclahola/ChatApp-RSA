@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React, { useEffect, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 import {
@@ -47,6 +40,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { ref as firebaseStorageRef, getDownloadURL, getStorage} from 'firebase/storage';
+import { useColorContext } from '../Setting/ColorContext';
 
 
 type SectionProps = {
@@ -55,6 +49,9 @@ type SectionProps = {
   };
 
 function Chat({navigation} : SectionProps): React.JSX.Element {
+	// Dark mode
+    const { darkMode } = useColorContext();
+
     const leftIcon = require('./img/back.png')
     const rightIcon = require('./img/search.png')
 	const trash = require('./img/trash.png')
@@ -119,7 +116,7 @@ function Chat({navigation} : SectionProps): React.JSX.Element {
 	// Nghĩa là không có gì thay đổi thì sẽ ko chạy lại
 
 	return (
-        <View>
+        <View style={{flex: 1, backgroundColor: darkMode.background}}>
             <UIHeader title='Chat'
 			onPressLeft={() => {
 				Alert.alert('Left')
@@ -156,7 +153,7 @@ function Chat({navigation} : SectionProps): React.JSX.Element {
 			user = {item} key = {item.name}/>}	
 			keyExtractor={item => item.name}
 			/> */}
-			<ScrollView style={styles.flatList}>
+			<ScrollView style={{...styles.flatList, backgroundColor: darkMode.background}}>
 				{users.map((user) => {
 					return <ChatItem onPress={() => {
 						navigation.navigate('Messenger', {user: user})		// Cái user: item là để truyền prop cho route của Messenger
@@ -179,7 +176,7 @@ const styles = StyleSheet.create({
 	},
 
 	flatList: {
-		// backgroundColor: 'red'
+		// backgroundColor: 'red',
 		bottom: 20,
 	}
 });

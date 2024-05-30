@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React, { useEffect, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 
@@ -49,6 +42,8 @@ import { ref as firebaseStorageRef} from 'firebase/storage';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useColorContext } from '../Setting/ColorContext';
 
 type SectionProps = {
     navigation: NavigationProp<any, any>
@@ -56,6 +51,11 @@ type SectionProps = {
 };
 
 function Profile({navigation} : SectionProps): React.JSX.Element {
+    // Màu
+    const { colors } = useColorContext();
+    // Dark mode
+    const { darkMode } = useColorContext();
+
     const [isSync, setIsSync] = useState(false)
     const [avatarUrl, setAvarUrl] = useState()
     const [cameraPhoto, setCameraPhoto] = useState()
@@ -66,44 +66,79 @@ function Profile({navigation} : SectionProps): React.JSX.Element {
         mediaType: 'photo',
     }
 
+    // const openCamera = async () => {
+    //     const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA)
+    //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //         const result = await launchCamera(options)
+    //         console.log(result)
+    //         // setCameraPhoto(result.assets[0].uri)
+    //     }
+    // }
+
     const openCamera = async () => {
-        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA)
+        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            const result = await launchCamera(options)
-            console.log(result)
-            // setCameraPhoto(result.assets[0].uri)
+            const result = await launchCamera(options);
+            if (!result.didCancel && result.assets && result.assets.length > 0) {
+                const capturedImageUri = result.assets[0].uri;
+                setCameraPhoto(capturedImageUri);
+    
+                try {
+                    const storage = getStorage();
+                    const storageReference = firebaseStorageRef(storage, `/users/${auth.currentUser?.uid}/avatar.jpg`);
+    
+                    // Tải dữ liệu từ URI
+                    const response = await fetch(capturedImageUri);
+                    const imageBlob = await response.blob();
+                    await uploadBytes(storageReference, imageBlob).then(async () => {
+                        const now = new Date().getTime();
+                        const avatar = {
+                            url: `/users/${auth.currentUser?.uid}/avatar.jpg`,
+                            timestamp: now,
+                        };
+                        await firebaseDatabaseSet(firebaseDatabaseRef(firebaseDatabase, `users/${auth.currentUser?.uid}/avatar`), avatar);
+    
+                        // Update avatar URL state
+                        const downloadUrl = await getDownloadURL(storageReference);
+                        setAvarUrl(downloadUrl);
+                    });
+                } catch (error) {
+                    Alert.alert('Error', error.message);
+                }
+            }
         }
-    }
+    };
 
-    const openGallery = async() => {
-        try
-        {
-            const result = await launchImageLibrary(options)
-            if(result.didCancel == null)        //Nếu không có trường didCancel
-            {
-                setGalleryPhoto(result.assets[0].uri)
-
-                const storage = getStorage()
-                const storageReference = firebaseStorageRef(storage,`/users/${auth.currentUser?.uid}/avatar.jpg`)
-
+    const openGallery = async () => {
+        try {
+            const result = await launchImageLibrary(options);
+            if (!result.didCancel && result.assets && result.assets.length > 0) {
+                const selectedImageUri = result.assets[0].uri;
+                setGalleryPhoto(selectedImageUri);
+    
+                const storage = getStorage();
+                const storageReference = firebaseStorageRef(storage, `/users/${auth.currentUser?.uid}/avatar.jpg`);
+    
                 // Tải dữ liệu từ URI
-                const response = await fetch(galleryPhoto);
+                const response = await fetch(selectedImageUri);
                 const imageBlob = await response.blob();
-                await uploadBytes(storageReference, imageBlob).then(() => {
-                    const now = new Date().getTime()
+                await uploadBytes(storageReference, imageBlob).then(async () => {
+                    const now = new Date().getTime();
                     const avatar = {
                         url: `/users/${auth.currentUser?.uid}/avatar.jpg`,
                         timestamp: now,
-                    }
-                    firebaseDatabaseSet(firebaseDatabaseRef(firebaseDatabase, `users/${auth.currentUser?.uid}/avatar`), avatar)
-                })
+                    };
+                    await firebaseDatabaseSet(firebaseDatabaseRef(firebaseDatabase, `users/${auth.currentUser?.uid}/avatar`), avatar);
+    
+                    // Update avatar URL state
+                    const downloadUrl = await getDownloadURL(storageReference);
+                    setAvarUrl(downloadUrl);
+                });
             }
+        } catch (error) {
+            Alert.alert('Error', error.message);
         }
-        catch (error)
-        {
-            Alert.alert('Error', error.message)
-        }
-    }
+    };
 
     // Lấy avatar
     const getAvatar = async () => {
@@ -152,16 +187,17 @@ function Profile({navigation} : SectionProps): React.JSX.Element {
     const hideImage = () => setImageVisible(false)
 
     return (
-        <View style={styles.container}>
+        <View style={{...styles.container, backgroundColor: darkMode.background}}>
             <View style={styles.body}>
-                <View style={styles.subBody}>
+                <View style={{...styles.subBody, backgroundColor: colors.primary}}>
                     <TouchableOpacity onPress={show}>
                         <Image style={styles.img} source={{uri: avatarUrl ? avatarUrl : 'https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1114445501.jpg'}}></Image>
                     </TouchableOpacity>
                     <Modal visible={visible} animationType='slide' onRequestClose={hide} transparent={true}>
-                        <Pressable style={{height: 200}} onPress={hide}></Pressable>
+                        <Pressable style={{height: 240}} onPress={hide}></Pressable>
                         <SafeAreaView style={{flex: 1, backgroundColor: 'white', borderRadius: 20}}>
-                            <View style={{height: 10, width: 100, backgroundColor: '#bdc7c0', borderRadius: 20, marginVertical: 20, alignSelf: 'center'}}></View>
+                            {/* <View style={{height: 10, width: 100, backgroundColor: '#bdc7c0', borderRadius: 20, marginVertical: 20, alignSelf: 'center'}}></View> */}
+                            <View style={{height: 10}}></View>
                             <TouchableOpacity style={styles.imageOption} onPress={showImage}>
                                 <Image source={require('./img/user.png')} style={styles.imageIcon}></Image>
                                 <Text style={{fontSize: 18, color: 'black'}}>Xem Avatar</Text>
@@ -239,12 +275,13 @@ function Profile({navigation} : SectionProps): React.JSX.Element {
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.signOut} onPress={() => {
+            <TouchableOpacity style={{...styles.signOut, backgroundColor: colors.secondary}} onPress={() => {
                     auth.signOut()
+                    AsyncStorage.removeItem('user');
                     navigation.dispatch(StackActions.popToTop)      //Pop stack
 
                 }}>
-                <Text style={{color: 'white'}}>Log Out</Text>
+                <Text style={{color: 'white'}}>Đăng xuất</Text>
             </TouchableOpacity>
 
         </View>
@@ -253,17 +290,17 @@ function Profile({navigation} : SectionProps): React.JSX.Element {
 
 const styles = StyleSheet.create({
     container: {
-        marginHorizontal: 10,
-        marginTop: 10,
         flex: 1,
     },
 
     body: {
         flex: 1,
+        marginHorizontal: 10,
+        marginTop: 10,
     },
 
     subBody: {
-        backgroundColor: 'rgba(255, 0, 0, 0.3)',
+        // backgroundColor: 'rgba(255, 0, 0, 0.3)',
         borderRadius: 16,
     },
 
@@ -297,8 +334,8 @@ const styles = StyleSheet.create({
     },
 
     signOut: {
-        backgroundColor: 'red',
-        width: 80,
+        // backgroundColor: 'red',
+        width: 90,
         height: 40,
         alignSelf: 'center',
         alignItems: 'center',

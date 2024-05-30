@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React, { useEffect, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 
@@ -71,34 +64,34 @@ function Register({navigation} : SectionProps): React.JSX.Element {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={styles.container}>
             <ScrollView>
                 <View style={styles.haveAccountWrapper}>
-                    <Text style={styles.haveAccountText}>Doesn't have account? Register!</Text>
-                    <Image tintColor={'red'} style={styles.haveAccountImage} source={require('./img/chat.png')}></Image>
+                    <Text style={styles.haveAccountText}>Chưa có tài khoản? Đăng ký ngay!</Text>
+                    <Image tintColor={'red'} style={styles.haveAccountImage} source={require('./img/sign-up.png')}></Image>
                 </View>
                 <View>
                     <View style={styles.infoWrapper}>
                         <Text style={styles.info}>Email:</Text>
                         <TextInput style={{color: 'black'}} value={email} onChangeText={(text) => {
-                            setErrorEmail(isValidEmail(text) ? '' : 'Email is not in correct format')
+                            setErrorEmail(isValidEmail(text) ? '' : 'Email không đúng chuẩn')
                             setEmail(text)}} 
                             placeholder='example@gmail.com' placeholderTextColor={'gray'}></TextInput>
                         <View style={styles.line}></View>
                         <Text style={styles.errorNoticeText}>{errorEmail}</Text>
                     </View>
                     <View style={styles.infoWrapper}>
-                        <Text style={styles.info}>Enter your password</Text>
+                        <Text style={styles.info}>Mật khẩu:</Text>
                         <TextInput style={{color: 'black'}} value={password} onChangeText={(text) => {
-                            setErrorPassword(isValidPassword(text) ? '' : 'Password must at least 6 characters')
+                            setErrorPassword(isValidPassword(text) ? '' : 'Mật khẩu ít nhất 6 ký tự')
                             setPassword(text)}} 
-                            secureTextEntry={true} placeholder='Enter your password' placeholderTextColor={'gray'}></TextInput>
+                            secureTextEntry={true} placeholder='Nhập mật khẩu' placeholderTextColor={'gray'}></TextInput>
                         <View style={styles.line}></View>
                         <Text style={styles.errorNoticeText}>{errorPassword}</Text>
                     </View>
                     <View style={styles.infoWrapper}>
-                        <Text style={styles.info}>Re-enter your password</Text>
+                        <Text style={styles.info}>Nhập lại mật khẩu:</Text>
                         <TextInput style={{color: 'black'}} value={rePassword} onChangeText={(text) => {
-                            setErrorRePassword(isValidPassword(text) ? '' : 'Password must at least 6 characters')
+                            setErrorRePassword(isValidPassword(text) ? '' : 'Mật khẩu ít nhất 6 ký tự')
                             setRePassword(text)}} 
-                            secureTextEntry={true} placeholder='Re-enter your password' placeholderTextColor={'gray'}></TextInput>
+                            secureTextEntry={true} placeholder='Nhập mật khẩu' placeholderTextColor={'gray'}></TextInput>
                         <View style={styles.line}></View>
                         <Text style={styles.errorNoticeText}>{errorRePassword}</Text>
                     </View>
@@ -128,10 +121,10 @@ function Register({navigation} : SectionProps): React.JSX.Element {
                             Alert.alert(`Không thể đăng ký, error: ${error.message}`)
                         })}
                         disabled={!isValidation} style={{...styles.loginButton, backgroundColor: isValidation ? 'red' : 'gray'}}>
-                        <Text style={{padding: 10, color: 'white', fontSize: 16}}>Register</Text>
+                        <Text style={{padding: 10, color: 'white', fontSize: 16}}>Đăng Ký</Text>
                     </TouchableOpacity>
                     {keyBoardShow == false && <TouchableOpacity style={{marginTop: 10}} onPress={() => navigation.navigate('Login')}>
-                        <Text style={styles.registerText}>Already have an account? Login Now</Text>
+                        <Text style={styles.registerText}>Có tài khoản rồi? Đăng nhập!</Text>
                     </TouchableOpacity>}
                 </View>
             </ScrollView>

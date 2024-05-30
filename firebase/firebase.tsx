@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'
+import { getAuth, setPersistence, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'
 import { getDatabase, ref as firebaseDatabaseRef, set as firebaseDatabaseSet, child, get, onValue } from 'firebase/database'
 //ref tham chieu den collection
 import { doc, setDoc } from 'firebase/firestore';
@@ -24,6 +24,7 @@ const firebaseDatabase = getDatabase()
 
 export {
     auth,
+    setPersistence,
     firebaseDatabase,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,

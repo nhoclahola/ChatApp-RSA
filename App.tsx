@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
@@ -32,11 +25,13 @@ import Messenger from './screens/Messenger/Messenger'
 import Login from './screens/Login/Login';
 import Register from './screens/Register/Register';
 import UITab from './tab_navigation/UITab';
+import { ColorProvider } from './screens/Setting/ColorContext';
 
 
 function App(): React.JSX.Element {
 	const Stack = createNativeStackNavigator()
 	return (
+		<ColorProvider>
 		<NavigationContainer>
 			<Stack.Navigator initialRouteName='Login' screenOptions={{headerShown: false}}>
 				<Stack.Screen name='Login' component={Login}/>
@@ -47,6 +42,7 @@ function App(): React.JSX.Element {
 				<Stack.Screen name='Messenger' component={Messenger}/>
 			</Stack.Navigator>
 		</NavigationContainer>
+		</ColorProvider>
 	)
 }
 

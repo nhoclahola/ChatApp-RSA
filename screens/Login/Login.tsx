@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React, { useEffect, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 
@@ -82,25 +75,25 @@ function Login({navigation} : SectionProps): React.JSX.Element {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={styles.container}>
             <ScrollView>
                 <View style={styles.haveAccountWrapper}>
-                    <Text style={styles.haveAccountText}>Already have an account? Sign in!</Text>
+                    <Text style={styles.haveAccountText}>Ứng dụng nhắn tin mã hoá đầu cuối</Text>
                     <Image tintColor={'red'} style={styles.haveAccountImage} source={require('./img/chat.png')}></Image>
                 </View>
                 <View style={styles.loginWrapper}>
                     <View style={styles.infoWrapper}>
                         <Text style={styles.info}>Email:</Text>
                         <TextInput style={{color: 'black'}} value={email} onChangeText={(text) => {
-                            setErrorEmail(isValidEmail(text) ? '' : 'Email is not in correct format')
+                            setErrorEmail(isValidEmail(text) ? '' : 'Email không đúng chuẩn')
                             setEmail(text)}} 
                             placeholder='example@gmail.com' placeholderTextColor={'gray'}></TextInput>
                         <View style={styles.line}></View>
                         <Text style={styles.errorNoticeText}>{errorEmail}</Text>
                     </View>
                     <View style={styles.infoWrapper}>
-                        <Text style={styles.info}>Enter your password</Text>
+                        <Text style={styles.info}>Mật khẩu:</Text>
                         <TextInput style={{color: 'black'}} value={password} onChangeText={(text) => {
-                            setErrorPassword(isValidPassword(text) ? '' : 'Password must at least 6 characters')
+                            setErrorPassword(isValidPassword(text) ? '' : 'Mật khẩu ít nhất 6 ký tự')
                             setPassword(text)}} 
-                            secureTextEntry={true} placeholder='Enter your password' placeholderTextColor={'gray'}></TextInput>
+                            secureTextEntry={true} placeholder='Nhập mật khẩu của bạn' placeholderTextColor={'gray'}></TextInput>
                         <View style={styles.line}></View>
                         <Text style={styles.errorNoticeText}>{errorPassword}</Text>
                     </View>
@@ -143,10 +136,10 @@ function Login({navigation} : SectionProps): React.JSX.Element {
                         })}
                     }
                         disabled={!isValidation} style={{...styles.loginButton, backgroundColor: isValidation ? 'red' : 'gray'}}>
-                        <Text style={{padding: 10, color: 'white', fontSize: 16}}>Login</Text>
+                        <Text style={{padding: 10, color: 'white', fontSize: 16}}>Đăng Nhập</Text>
                     </TouchableOpacity>
                     {keyBoardShow == false && <TouchableOpacity style={{marginTop: 10}} onPress={() => navigation.navigate('Register')}>
-                        <Text style={styles.registerText}>Doesn't have account? Register Now</Text>
+                        <Text style={styles.registerText}>Chưa có tài khoản? Đăng ký ngay!</Text>
                     </TouchableOpacity>}
                 </View>
             </ScrollView>
