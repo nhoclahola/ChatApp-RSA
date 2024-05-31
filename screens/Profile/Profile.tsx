@@ -281,7 +281,7 @@ function Profile({navigation} : SectionProps): React.JSX.Element {
                     navigation.dispatch(StackActions.popToTop)      //Pop stack
 
                 }}>
-                <Text style={{color: 'white'}}>Đăng xuất</Text>
+                <Text style={{color: 'white', fontWeight: 'bold'}}>Đăng xuất</Text>
             </TouchableOpacity>
 
         </View>
