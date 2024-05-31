@@ -75,6 +75,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginRight: 15,
         marginStart: 10,
+        borderColor: 'white',
+        borderWidth: 2,
     },
 
     unread: {
